@@ -1,0 +1,6 @@
+{
+  "name": "APIverse Studio - Public API Hub & Live Preview",
+  "description": "Explore, test, and preview 118+ free public APIs with live interactive UI components, code preview, and 1-click React component downloads.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

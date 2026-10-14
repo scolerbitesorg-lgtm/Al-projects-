@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Connection testing endpoint for health checks
+    match /test/connection {
+      allow read: if true;
+    }
+
+    // Workspaces: Each visitor has their own isolated saved items in Firestore
+    match /workspaces/{sessionId} {
+      allow read, write: if isValidId(sessionId);
+
+      // User Bookmarks subcollection
+      match /bookmarks/{bookmarkId} {
+        allow read, write: if isValidId(sessionId) && isValidId(bookmarkId);
+      }
+
+      // User Downloads subcollection
+      match /downloads/{downloadId} {
+        allow read, write: if isValidId(sessionId) && isValidId(downloadId);
+      }
+    }
+
+    // Backward-compatible users collection
+    match /users/{userId} {
+      allow read, write: if isValidId(userId);
+
+      match /bookmarks/{bookmarkId} {
+        allow read, write: if isValidId(userId) && isValidId(bookmarkId);
+      }
+
+      match /downloads/{downloadId} {
+        allow read, write: if isValidId(userId) && isValidId(downloadId);
+      }
+    }
+  }
+}

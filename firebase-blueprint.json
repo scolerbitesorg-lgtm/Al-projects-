@@ -1,0 +1,79 @@
+{
+  "entities": {
+    "Workspace": {
+      "title": "Workspace",
+      "description": "Client device isolated workspace storing saved APIs, history, and downloads in Firestore without login barrier",
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string",
+          "description": "Unique client device identifier"
+        },
+        "bookmarks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of saved API IDs for this user"
+        },
+        "downloads": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of exported component code names"
+        },
+        "lastActiveAt": {
+          "type": "string",
+          "description": "ISO timestamp of last activity"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation ISO timestamp"
+        }
+      },
+      "required": ["sessionId", "bookmarks", "createdAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Optional registered user profile",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Display name"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp"
+        }
+      },
+      "required": ["id", "name", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/workspaces/{sessionId}": {
+      "schema": {
+        "$ref": "#/entities/Workspace"
+      },
+      "description": "User specific isolated workspace document storing saved bookmarks and download history in Firestore"
+    },
+    "/workspaces/{sessionId}/bookmarks/{bookmarkId}": {
+      "schema": {
+        "$ref": "#/entities/Workspace"
+      },
+      "description": "Subcollection for granular bookmarks per user session"
+    },
+    "/workspaces/{sessionId}/downloads/{downloadId}": {
+      "schema": {
+        "$ref": "#/entities/Workspace"
+      },
+      "description": "Subcollection for granular downloads per user session"
+    }
+  }
+}
